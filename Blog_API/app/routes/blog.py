@@ -7,6 +7,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Forbidden, Unauthorized
 blog_bp = Blueprint("blog_api", __name__, url_prefix="/api")
 
 
+# get all posts with pagination
 @blog_bp.route("/posts", methods=["GET"])
 def get_all_posts():
     page = request.args.get("page", 1, type=int)
@@ -29,6 +30,7 @@ def get_all_posts():
     )
 
 
+# get a post by id
 @blog_bp.route("/posts/<int:post_id>", methods=["GET"])
 def get_post(post_id: int):
     post = db.session.get(Post, post_id)
@@ -37,6 +39,7 @@ def get_post(post_id: int):
     return jsonify(post.serialize(comments=True)), 200
 
 
+# create a new post
 @blog_bp.route("/posts", methods=["POST"])
 @jwt_required()
 def create_post():
@@ -59,6 +62,7 @@ def create_post():
     )
 
 
+# update or delete a post by id
 @blog_bp.route("/posts/<int:post_id>", methods=["PUT", "DELETE"])
 @jwt_required()
 def modify_delete_post(post_id):
@@ -94,6 +98,7 @@ def modify_delete_post(post_id):
         raise Forbidden("Method is Not Allowed")
 
 
+# get comments for a post
 @blog_bp.route("/posts/<int:post_id>/comments", methods=["GET"])
 def get_comments(post_id: int):
     post = db.session.get(Post, post_id)
@@ -105,6 +110,7 @@ def get_comments(post_id: int):
     return jsonify([comment.serialize() for comment in comments]), 200
 
 
+# add comment for a post
 @blog_bp.route("/posts/<int:post_id>/comments", methods=["POST"])
 @jwt_required(optional=True)
 def add_comment(post_id):

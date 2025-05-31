@@ -11,12 +11,15 @@ class User(db.Model):
     lastname = db.Column(db.String(64), index=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
 
+    # set password to the user
     def set_password(self, password: str):
         self.password = get_password_hash(password)
 
+    # check password is valid or not
     def check_password(self, password: str) -> bool:
         return check_password(password, self.password)
 
+    # serialize the User
     def serialize(self):
         return {
             "id": self.id,

@@ -12,15 +12,23 @@ class Post(db.Model):
     publish_date = db.Column(
         db.DateTime, index=True, default=lambda: datetime.now(timezone.utc)
     )
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False
+    )  # ForeignKey to user table
+
+    # Define relationship to User model (author of the post)
     author = db.relationship(
         "User",
         backref=db.backref("posts", lazy="dynamic", cascade="all, delete-orphan"),
     )
+
+    # Define relationship to Comment model (comments of the post)
     comments = db.relationship(
         "Comment", backref="article", lazy="dynamic", cascade="all, delete-orphan"
     )
 
+    # serialize the Post with it's Comments
     def serialize(self, comments=False):
         data = {
             "id": self.id,

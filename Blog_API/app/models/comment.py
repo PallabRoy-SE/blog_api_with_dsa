@@ -11,14 +11,19 @@ class Comment(db.Model):
     timestamp = db.Column(
         db.DateTime, index=True, default=lambda: datetime.now(timezone.utc)
     )
+
+    # Commenter can be a registered user or null
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
 
+    # Define relationship to User model (commenter)
     commenter = db.relationship(
         "User",
         backref=db.backref("comments", lazy="dynamic", cascade="all, delete-orphan"),
     )
 
+    # serialize the Comment
     def serialize(self):
         return {
             "id": self.id,

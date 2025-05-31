@@ -12,6 +12,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 auth_bp = Blueprint("auth_api", __name__, url_prefix="/api/auth")
 
 
+# Register a new user
 @auth_bp.route("/register", methods=["POST"])
 def register_user():
     data = request.get_json()
@@ -40,6 +41,7 @@ def register_user():
     )
 
 
+# Login an existing user
 @auth_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -64,6 +66,7 @@ def login():
     raise Unauthorized("Invalid credentials")
 
 
+# refresh the access token if expired
 @auth_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh_token():
@@ -72,6 +75,7 @@ def refresh_token():
     return jsonify(access_token=new_access_token), 200
 
 
+# get the current authenticated user
 @auth_bp.route("/current-user", methods=["GET"])
 @jwt_required()
 def get_current_user():
@@ -82,6 +86,7 @@ def get_current_user():
     return jsonify(current_user.serialize()), 200
 
 
+# handle API errors
 @auth_bp.app_errorhandler(BadRequest)
 def handle_auth_bad_request(e):
     return jsonify(error=str(e.description) if e.description else "Bad Request"), 400
