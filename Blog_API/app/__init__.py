@@ -18,11 +18,13 @@ def create_app():
     jwt.init_app(app)
 
     from app.routes.auth import auth_bp
+    from app.routes.blog import blog_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(blog_bp)
 
     @app.get("/")
     def available_routes():
-        return f"<h1>Available API Routes:</h1><ul><li>/api/auth/register [POST]</li><li>/api/auth/login [POST]</li><li>/api/auth/refresh [POST]</li><li>/api/auth/current-user [GET]</li></ul>"
+        return f"<h1>Available API Routes:</h1><ul><li>/api/auth/register [POST]</li><li>/api/auth/login [POST]</li><li>/api/auth/refresh [POST]</li><li>/api/auth/current-user [GET]</li><li>/api/posts [GET, POST]</li><li>/posts/:post_id [GET, PUT, DELETE]</li><li>/posts/:post_id/comments [GET, POST]</li></ul>"
 
     return app
